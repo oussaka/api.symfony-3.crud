@@ -40,19 +40,9 @@ twig:
 # Doctrine Configuration
 doctrine:
     dbal:
-        driver:   pdo_mysql
-        host:     "%database_host%"
-        port:     "%database_port%"
-        dbname:   "%database_name%"
-        user:     "%database_user%"
-        password: "%database_password%"
-        charset:  UTF8
-        # if using pdo_sqlite as your database driver:
-        #   1. add the path in parameters.yml
-        #     e.g. database_path: "%kernel.root_dir%/data/data.db3"
-        #   2. Uncomment database_path in parameters.yml.dist
-        #   3. Uncomment next line:
-        #     path:     "%database_path%"
+        driver: pdo_sqlite
+        path:   "%database_path%"
+        charset: UTF8
 
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
@@ -67,8 +57,6 @@ swiftmailer:
     password:  "%mailer_password%"
     spool:     { type: memory }
 
-
-
 # Nelmio CORS
 nelmio_cors:
     defaults:
@@ -81,14 +69,20 @@ nelmio_cors:
 
 # Nelmio API Doc
 nelmio_api_doc:
-    sandbox:
-        accept_type:        "application/json"
-        body_format:
-            formats:        [ "json" ]
-            default_format: "json"
-        request_format:
-            formats:
-                json:       "application/json"
+    documentation:
+        info:
+            title: My Awesome App!
+
+
+#nelmio_api_doc:
+#    sandbox:
+#        accept_type:        "application/json"
+#        body_format:
+#            formats:        [ "json" ]
+#            default_format: "json"
+#        request_format:
+#            formats:
+#                json:       "application/json"
 
 
 # FOS REST Bundle
@@ -97,7 +91,6 @@ fos_rest:
     param_fetcher_listener: true
     view:
         view_response_listener: 'force'
-        exception_wrapper_handler:  null
         formats:
             jsonp: true
             json: true

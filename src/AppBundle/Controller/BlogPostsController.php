@@ -11,7 +11,9 @@ use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
-use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Nelmio\ApiDocBundle\Annotation\Operation;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Swagger\Annotations as SWG;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormTypeInterface;
@@ -35,13 +37,19 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      *
-     * @ApiDoc(
-     *     output="AppBundle\Entity\BlogPost",
-     *     statusCodes={
-     *         200 = "Returned when successful",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="Gets an individual Blog Post",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     )
      * )
+     *
      */
     public function getAction(int $id)
     {
@@ -59,13 +67,19 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      *
      * @return array
      *
-     * @ApiDoc(
-     *     output="AppBundle\Entity\BlogPost",
-     *     statusCodes={
-     *         200 = "Returned when successful",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="Gets a collection of BlogPosts",
+     *     @SWG\Response(
+     *         response="200",
+     *         description="Returned when successful"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     )
      * )
+     *
      */
     public function cgetAction()
     {
@@ -76,17 +90,38 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      * @param Request $request
      * @return View|\Symfony\Component\Form\Form
      *
-     * @ApiDoc(
-     *     input="AppBundle\Form\Type\BlogPostType",
-     *     output="AppBundle\Entity\BlogPost",
-     *     statusCodes={
-     *         201 = "Returned when a new BlogPost has been successful created",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="Create a new post",
+     *     @SWG\Parameter(
+     *         name="blog_post",
+     *         description="json post request object",
+     *         required=true,
+     *         in="body",
+     *         @SWG\Schema(
+     *             @Model(type=AppBundle\Form\Type\BlogPostType::class)
+     *         )
+     *     ),
+     *     @SWG\Response(
+     *         response="201",
+     *         description="Returned when a new BlogPost has been successful created"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     )
      * )
+     *
      */
     public function postAction(Request $request)
     {
+
+        echo __FILE__;
+        echo '<pre>';
+        print_r($request->request->all());
+        echo '</pre>';
+        die;
+
         $form = $this->createForm(BlogPostType::class, null, [
             'csrf_protection' => false,        
         ]);
@@ -119,15 +154,34 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      * @param int     $id
      * @return View|\Symfony\Component\Form\Form
      *
-     * @ApiDoc(
-     *     input="AppBundle\Form\Type\BlogPostType",
-     *     output="AppBundle\Entity\BlogPost",
-     *     statusCodes={
-     *         204 = "Returned when an existing BlogPost has been successful updated",
-     *         400 = "Return when errors",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="",
+     *     @SWG\Parameter(
+     *         name="blog_post",
+     *         in="body",
+     *         description="",
+     *         required=false,
+     *         @SWG\Schema(type="object (BlogPostType)")
+     *     ),
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when an existing BlogPost has been successful updated"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Return when errors"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     ),
+     *     @SWG\Response(
+     *         response="500",
+     *         description="Returned on any other error"
+     *     )
      * )
+     *
      */
     public function putAction(Request $request, int $id)
     {
@@ -167,15 +221,30 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      * @param int     $id
      * @return View|\Symfony\Component\Form\Form
      *
-     * @ApiDoc(
-     *     input="AppBundle\Form\Type\BlogPostType",
-     *     output="AppBundle\Entity\BlogPost",
-     *     statusCodes={
-     *         204 = "Returned when an existing BlogPost has been successful updated",
-     *         400 = "Return when errors",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="",
+     *     @SWG\Parameter(
+     *         name="blog_post",
+     *         in="body",
+     *         description="",
+     *         required=false,
+     *         @SWG\Schema(type="object (BlogPostType)")
+     *     ),
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when an existing BlogPost has been successful updated"
+     *     ),
+     *     @SWG\Response(
+     *         response="400",
+     *         description="Return when errors"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     )
      * )
+     *
      */
     public function patchAction(Request $request, int $id)
     {
@@ -214,12 +283,19 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      * @param int $id
      * @return View
      *
-     * @ApiDoc(
-     *     statusCodes={
-     *         204 = "Returned when an existing BlogPost has been successful deleted",
-     *         404 = "Return when not found"
-     *     }
+     * @Operation(
+     *     tags={""},
+     *     summary="",
+     *     @SWG\Response(
+     *         response="204",
+     *         description="Returned when an existing BlogPost has been successful deleted"
+     *     ),
+     *     @SWG\Response(
+     *         response="404",
+     *         description="Return when not found"
+     *     )
      * )
+     *
      */
     public function deleteAction(int $id)
     {
