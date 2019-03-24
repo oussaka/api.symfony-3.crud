@@ -5,21 +5,16 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\BlogPost;
 use AppBundle\Entity\Repository\BlogPostRepository;
 use AppBundle\Form\Type\BlogPostType;
-use FOS\RestBundle\View\View;
-use FOS\RestBundle\Controller\Annotations;
-use FOS\RestBundle\View\RouteRedirectView;
+use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Controller\Annotations\RouteResource;
-use Nelmio\ApiDocBundle\Annotation\Operation;
+use FOS\RestBundle\View\RouteRedirectView;
+use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Operation;
 use Swagger\Annotations as SWG;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 /**
  * Class BlogPostsController
@@ -54,12 +49,20 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
     public function getAction(int $id)
     {
         $blogPost = $this->getBlogPostRepository()->createFindOneByIdQuery($id)->getSingleResult();
-        
+
         if ($blogPost === null) {
             return new View(null, Response::HTTP_NOT_FOUND);
         }
-        
+
         return $blogPost;
+    }
+
+    /**
+     * @return BlogPostRepository
+     */
+    private function getBlogPostRepository()
+    {
+        return $this->get('crv.doctrine_entity_repository.blog_post');
     }
 
     /**
@@ -114,11 +117,11 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
     public function postAction(Request $request)
     {
         $form = $this->createForm(BlogPostType::class, null, [
-            'csrf_protection' => false,        
+            'csrf_protection' => false,
         ]);
-        
+
         $form->submit($request->request->all());
-        
+
         if (!$form->isValid()) {
             return $form;
         }
@@ -127,7 +130,7 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
          * @var $blogPost BlogPost
          */
         $blogPost = $form->getData();
-        
+
         $em = $this->getDoctrine()->getManager();
         $em->persist($blogPost);
         $em->flush();
@@ -206,7 +209,6 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
         return $this->routeRedirectView('get_post', $routeOptions, Response::HTTP_NO_CONTENT);
     }
 
-
     /**
      * @param Request $request
      * @param int     $id
@@ -269,7 +271,6 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
         return $this->routeRedirectView('get_post', $routeOptions, Response::HTTP_NO_CONTENT);
     }
 
-
     /**
      * @param int $id
      * @return View
@@ -304,13 +305,5 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
         $em->flush();
 
         return new View(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @return BlogPostRepository
-     */
-    private function getBlogPostRepository()
-    {
-        return $this->get('crv.doctrine_entity_repository.blog_post');
     }
 }
