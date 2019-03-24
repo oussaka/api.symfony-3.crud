@@ -98,9 +98,7 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      *         description="json post request object",
      *         required=true,
      *         in="body",
-     *         @SWG\Schema(
-     *             @Model(type=AppBundle\Form\Type\BlogPostType::class)
-     *         )
+     *         @SWG\Schema(ref=@Model(type=AppBundle\Form\Type\BlogPostType::class))
      *     ),
      *     @SWG\Response(
      *         response="201",
@@ -115,13 +113,6 @@ class BlogPostsController extends FOSRestController implements ClassResourceInte
      */
     public function postAction(Request $request)
     {
-
-        echo __FILE__;
-        echo '<pre>';
-        print_r($request->request->all());
-        echo '</pre>';
-        die;
-
         $form = $this->createForm(BlogPostType::class, null, [
             'csrf_protection' => false,        
         ]);
